@@ -1,0 +1,192 @@
+﻿@page "/Pages/Download"
+@inject HttpClient http
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
+
+@if (DetailsValid)
+{
+<h2 id="heading">Download Setup</h2>
+<div id="content">
+    <p>Click on the link below to download the setup file.</p>
+    <p>
+        <a href="/msi/@SetupFile">@SetupFile</a>
+    </p>
+    <p style="margin-top:30px">
+        The msi is signed with an EV Code Signing Certificate.  However,  your browser may issue a warning that it is
+        an uncommon download, as it is a new product.
+    </p>
+    <p>
+        You can download the
+        <a href="https://marketplace.visualstudio.com/items?itemName=Semata.SemataDataStoreT4Directives1v0v190v376">DataStoreT4Directives extension.</a>
+        from
+        <a href="https://marketplace.visualstudio.com/items?itemName=Semata.SemataDataStoreT4Directives1v0v190v376">here.</a>
+    </p>
+</div>
+}
+else
+{
+<h2 id="heading">Download</h2>
+<div id="content">
+    <p style="margin-left: 7.5em; text-indent: -7.5em">
+        Please Note:
+        The initial release is only available as a .Net assembly for Windows Desktop development,
+        or as a Windows Runtime Component, and is licensed for non-commercial uses only.  Running DataStore as a
+        <a href="/html/Architecture.html">separate process</a>
+        is not available in this release.
+    </p>
+    <p style="margin-top: 30px">
+        Enter your email address.  An Activation code will be sent to this address.
+        After you have downloaded and installed the setup file, run the Designer or Browser and
+        <a href="/html/Activation.html">activate</a>
+        the product.
+    </p>
+    <form>
+        <div class="form">
+            <p>
+                e-mail address
+                <input @bind="EmailAddress" maxlength="128" id="EmailAddress" type="text" tabindex="1" size="40" name="Email Address">
+            </p>
+            <Captcha @ref="captchaComponent" SiteKey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></Captcha>
+        </div>
+    </form>
+    <table>
+        <tr>
+            <td>
+                Description
+            </td>
+            <td>
+                Version
+            </td>
+            <td>
+                Build
+            </td>
+            <td>
+            </td>
+        </tr>
+        @foreach (var build in Builds)
+        {
+        <tr>
+            <td>
+                @build.Description
+            </td>
+            <td>
+                @build.LicenceVersion
+            </td>
+            <td>
+                @build.BuildVersion
+            </td>
+            <td>
+                <a @onclick="@(e =>VersionSelected(build))">download</a>
+            </td>
+        </tr>
+        }
+    </table>
+    <p class="errormessage" id="ErrorMessage">@ErrorMessage</p>
+    @((MarkupString)VersionHistory)
+</div>
+}
+
+@code {
+
+    class Build
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string LicenceVersion { get; set; }
+        public string Beta { get; set; }
+        public string BuildVersion { get; set; }
+        public string SetupFile { get; set; }
+        public Build(string name
+                        , string description
+                        , string licenceVersion
+                        , string beta
+                        , string buildVersion
+                        , string setupFile)
+        {
+            Name = name;
+            Description = description;
+            LicenceVersion = licenceVersion;
+            Beta = beta;
+            BuildVersion = buildVersion;
+            SetupFile = setupFile;
+        }
+    };
+
+    Captcha captchaComponent;
+
+    string EmailAddress { get; set; }
+
+    List<Build> Builds { get; } = new List<Build>();
+
+    string VersionHistory { get; set; }
+
+    bool DetailsValid { get; set; } = false;
+
+    string SetupFile { get; set; }
+
+    string ErrorMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var actionResponse = await ActionRequest.Post(http, configuration["wwwroot"],  "/cgi-local/api/api.pl", "Get Version Builds", new Dictionary<string, string>());
+        if (actionResponse.Success)
+        {
+            var responseLines = actionResponse.Message.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var responseLine in responseLines)
+            {
+                var buildFields = responseLine.Split(',');
+                Builds.Add(new Build(buildFields[0], buildFields[1], buildFields[2], buildFields[3], buildFields[4], buildFields[5]));
+            }
+            actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Get Version History", new Dictionary<string, string>());
+            if (actionResponse.Success)
+            {
+                VersionHistory = actionResponse.Message;
+            }
+            else
+            {
+                ErrorMessage = actionResponse.Message;
+            }
+        }
+        else
+        {
+            ErrorMessage = actionResponse.Message;
+        }
+
+    }
+
+    private async Task VersionSelected(Build build)
+    {
+        var reCaptchaResponse = await captchaComponent.GetResponse();
+        var arguments = new Dictionary<string, string>()
+        {
+            { "g-recaptcha-response", reCaptchaResponse }
+        };
+
+        var actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Check Captcha", arguments);
+        if (actionResponse.Success)
+        {
+            arguments = new Dictionary<string, string>()
+            {
+                { "Email Address", EmailAddress}
+                ,{ "Product Name", build.Name}
+                ,{ "Product Licence Version", build.LicenceVersion}
+                ,{ "Product Beta", build.Beta}
+            };
+            actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Activation Code Request", arguments);
+            if (actionResponse.Success)
+            {
+                DetailsValid = true;
+                SetupFile = build.SetupFile;
+            }
+            else
+            {
+                ErrorMessage = actionResponse.Message;
+            }
+        }
+        else
+        {
+            ErrorMessage = actionResponse.Message;
+        }
+    }
+}

@@ -1,0 +1,69 @@
+﻿
+<h2 id="heading">@Heading</h2>
+<div id="content">
+    <p>@Narrative</p>
+    <form>
+        <div class="form">
+            <span class="label">Email address</span>
+            <span class="input">
+                <input @bind="EmailAddress" maxlength="128" type="text" tabindex="1" size="40" name="Email Address" />
+            </span>
+        </div>
+        <div class="form">
+            <span class="label">Subject</span>
+            <span class="input">
+                <input @bind="Subject" type="text" tabindex="2" maxlength="128" name="Subject" size="40" />
+            </span>
+        </div>
+        <div class="form">
+            <span class="label">Details</span>
+            <span class="input">
+                <textarea @bind="Details" rows="10" tabindex="3" name="Details" cols="60"></textarea>
+            </span>
+        </div>
+        <div class="form">
+            <Captcha @ref="captchaComponent" SiteKey="@SiteKey"></Captcha>
+        </div>
+    </form>
+    <p class="errormessage">@MessageText</p>
+</div>
+
+@code
+{
+    Captcha captchaComponent;
+
+    [Parameter]
+    public string MessageText { get; set; }
+
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public string Narrative { get; set; }
+
+    [Parameter]
+    public string EmailAddress { get; set; }
+
+    [Parameter]
+    public string Subject { get; set; }
+
+    [Parameter]
+    public string Details { get; set; }
+
+    private string SiteKey { get; set; } = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+
+    public async Task<Dictionary<string, string>> GetNameValuePairs()
+    {
+        var reCaptchaResponse = await captchaComponent.GetResponse();
+        return new Dictionary<string, string>()
+           {
+                   { "Email Address", EmailAddress },
+                   { "Subject", Subject },
+                   { "Details", Details },
+                   { "g-recaptcha-response", reCaptchaResponse },
+           };
+
+
+    }
+
+}

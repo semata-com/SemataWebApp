@@ -1,0 +1,23 @@
+﻿@inject IJSRuntime JS
+
+<span id="recaptcha" data-sitekey="@SiteKey"></span>
+
+@code {
+
+    [Parameter]
+    public string SiteKey { get; set; }
+
+    public async Task<string> GetResponse()
+    {
+        return await JS.InvokeAsync<string>("grecaptcha.getResponse");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("grecaptcha.render", "recaptcha");
+        }
+    }
+
+}

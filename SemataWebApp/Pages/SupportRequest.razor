@@ -1,0 +1,28 @@
+﻿@page "/Pages/SupportRequest"
+@inject HttpClient http
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
+
+<Message @ref="messageComponent" Heading="Support Request" Narrative="@Narrative" MessageText="@MessageText" />
+
+<button @onclick="SubmitRequest">Submit</button>
+
+
+@code {
+
+    Message messageComponent;
+
+    string Narrative => "Please enter your email address and fill out the details of the problem below."
+                        + " The more information about the problem, the easier it will be for us to resolve"
+                        + " the problem";
+
+    public string MessageText { get; set; }
+
+    private async Task SubmitRequest()
+    {
+        var submitParameters = await messageComponent.GetNameValuePairs();
+        var actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Support Request", submitParameters);
+        MessageText = actionResponse.Message;
+    }
+
+}

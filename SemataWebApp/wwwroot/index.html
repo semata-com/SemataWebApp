@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <base href="/" />
+        <script type="text/javascript" src="/js/util.js"></script>
+        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <script src="_framework/blazor.webassembly.js"></script>
+        
+        <link href="/css/semata.css" rel="stylesheet"/>
+        <link rel="icon" href="/SemataIcon.ico"/>
+    </head>
+    <body onload="SetCenterHeight();" onresize="SetCenterHeight();">
+        <div id="page">
+            <div id="banner">
+                <p>
+                    <img src="/SemataIconBanner.png"/>
+                Semata
+                </p>
+            </div>
+            <div id="main">
+                <div id="left">
+                    <div id="sidebar">
+                        <ul>
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            <li>
+                                <a href="/html/Overview.html">Overview</a>
+                            </li>
+                            <li>
+                                <a href="/html/KeyConcepts.html">Key Concepts</a>
+                            </li>
+                            <li>
+                                <a href="/html/GettingStarted.html">Getting Started</a>
+                            </li>
+                            <li>
+                                <a href="/app/Pages/Download">Download</a>
+                            </li>
+                            <li>
+                                <a href="/html/Documentation.html">Documentation</a>
+                            </li>
+                            <li>
+                                <a href="/html/Support.html">Support</a>
+                            </li>
+                            <li>
+                                <a href="/app/Pages/ContactUs">Contact Us</a>
+                            </li>
+                            <li>
+                                <a href="/html/AboutUs.html">About</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="center">
+                    <div id="centercontent">
+                        <div id="content">
+                            <app>Loading...</app>
+                        </div>
+                    </div>
+                </div>
+                <div id="right"></div>
+            </div>
+        </div>
+        <div id="footer">&copy;2003 - 2020 Semata Ltd <a href="/html/TermsOfUse.html">Terms Of Use</a> <a href="/html/PrivacyPolicy.html">Privacy Policy</a></div>
+        <div id="modalfooter">
+            <div id="modalfooterback">
+                <div id="modalfootercontent">
+                    <p>
+                        This website stores cookies on your computer that are used to manage the order
+                        in which you see the pages. To find out more about the cookies we use, see our
+                        <a href="/html/PrivacyPolicy.html">Privacy Policy</a>.
+                    </p>
+                    <p>
+                        <button onclick="hideModalFooter(); setCookie('Allow-Cookies','Y', '/', '2592000');">
+                            Accept
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script xml:space="preserve" type="text/javascript">
+             <!--
+             if (getCookie("Allow-Cookies") == "")
+             {
+                 document.getElementById("modalfooter").style.display = "block";
+             }
+             -->
+         </script>
+
+    </body>
+</html>
