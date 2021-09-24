@@ -1,7 +1,4 @@
 ﻿@page "/Pages/SupportRequest"
-@inject HttpClient http
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration configuration
 
 <Message @ref="messageComponent" Heading="Support Request" Narrative="@Narrative" MessageText="@MessageText" />
 
@@ -21,7 +18,7 @@
     private async Task SubmitRequest()
     {
         var submitParameters = await messageComponent.GetNameValuePairs();
-        var actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Support Request", submitParameters);
+        var actionResponse = await ActionRequest.Post("Support Request", submitParameters);
         MessageText = actionResponse.Message;
     }
 

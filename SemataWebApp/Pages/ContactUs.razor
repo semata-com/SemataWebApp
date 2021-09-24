@@ -1,7 +1,4 @@
 ﻿@page "/Pages/ContactUs"
-@inject HttpClient http
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration configuration
 
 <Message @ref="messageComponent" Heading="Contact Us"  Narrative="@Narrative" MessageText="@MessageText" />
 
@@ -20,7 +17,7 @@
     {
         var submitParameters = await messageComponent.GetNameValuePairs();
         submitParameters["Action Id"] = "Contact Us";
-        var actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Contact Us", submitParameters);
+        var actionResponse = await ActionRequest.Post("Contact Us", submitParameters);
         MessageText = actionResponse.Message;
     }
 

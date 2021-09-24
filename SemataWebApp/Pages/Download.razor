@@ -1,7 +1,4 @@
 ﻿@page "/Pages/Download"
-@inject HttpClient http
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration configuration
 
 @if (DetailsValid)
 {
@@ -46,7 +43,7 @@ else
                 e-mail address
                 <input @bind="EmailAddress" maxlength="128" id="EmailAddress" type="text" tabindex="1" size="40" name="Email Address">
             </p>
-            <Captcha @ref="captchaComponent" SiteKey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></Captcha>
+            <Captcha @ref="captchaComponent" SiteKey="@SiteKey"></Captcha>
         </div>
     </form>
     <table>
@@ -126,10 +123,12 @@ else
 
     string ErrorMessage { get; set; }
 
+    private string SiteKey => Configuration.ReCaptchaSiteKey;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var actionResponse = await ActionRequest.Post(http, configuration["wwwroot"],  "/cgi-local/api/api.pl", "Get Version Builds", new Dictionary<string, string>());
+        var actionResponse = await ActionRequest.Post("Get Version Builds", new Dictionary<string, string>());
         if (actionResponse.Success)
         {
             var responseLines = actionResponse.Message.Split('\n', StringSplitOptions.RemoveEmptyEntries);
@@ -138,7 +137,7 @@ else
                 var buildFields = responseLine.Split(',');
                 Builds.Add(new Build(buildFields[0], buildFields[1], buildFields[2], buildFields[3], buildFields[4], buildFields[5]));
             }
-            actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Get Version History", new Dictionary<string, string>());
+            actionResponse = await ActionRequest.Post("Get Version History", new Dictionary<string, string>());
             if (actionResponse.Success)
             {
                 VersionHistory = actionResponse.Message;
@@ -163,7 +162,7 @@ else
             { "g-recaptcha-response", reCaptchaResponse }
         };
 
-        var actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Check Captcha", arguments);
+        var actionResponse = await ActionRequest.Post("Check Captcha", arguments);
         if (actionResponse.Success)
         {
             arguments = new Dictionary<string, string>()
@@ -173,7 +172,7 @@ else
                 ,{ "Product Licence Version", build.LicenceVersion}
                 ,{ "Product Beta", build.Beta}
             };
-            actionResponse = await ActionRequest.Post(http, configuration["wwwroot"], "/cgi-local/api/api.pl", "Activation Code Request", arguments);
+            actionResponse = await ActionRequest.Post("Activation Code Request", arguments);
             if (actionResponse.Success)
             {
                 DetailsValid = true;

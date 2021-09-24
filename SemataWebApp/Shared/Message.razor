@@ -50,7 +50,7 @@
     [Parameter]
     public string Details { get; set; }
 
-    private string SiteKey { get; set; } = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+    private string SiteKey => Configuration.ReCaptchaSiteKey;
 
     public async Task<Dictionary<string, string>> GetNameValuePairs()
     {

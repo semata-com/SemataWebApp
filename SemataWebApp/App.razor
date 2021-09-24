@@ -1,3 +1,7 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
+@inject HttpClient http
+
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -8,3 +12,14 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        Configuration.HttpClient = http;
+        Configuration.WWWRoot = configuration["wwwroot"];
+        Configuration.URL = configuration["url"];
+        Configuration.ReCaptchaSiteKey = configuration["reCaptchaSiteKey"];
+    }
+}

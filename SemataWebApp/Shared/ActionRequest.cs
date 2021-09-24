@@ -18,10 +18,7 @@ namespace SemataWebApp.Shared
     }
     public class ActionRequest
     {
-        public async static Task<ActionResponse> Post(HttpClient httpClient
-                                                      , string wwwroot
-                                                      , string url
-                                                      , string action
+        public async static Task<ActionResponse> Post(string action
                                                       , Dictionary<string, string> parameters)
         {
             ActionResponse actionResponse;
@@ -29,7 +26,7 @@ namespace SemataWebApp.Shared
             {
                 parameters["Action Id"] = action;
                 var requestContent = new FormUrlEncodedContent(parameters);
-                var response = await httpClient.PostAsync(wwwroot + url, requestContent);
+                var response = await Configuration.HttpClient.PostAsync(Configuration.WWWRoot + Configuration.URL, requestContent);
                 var responseText = await response.Content.ReadAsStringAsync();
                 var responseFields = responseText.Split('\n', 2);
                 actionResponse = new ActionResponse(responseFields[0] == "0" ? false : true, responseFields[1]);
