@@ -56,12 +56,12 @@
     {
         var reCaptchaResponse = await captchaComponent.GetResponse();
         return new Dictionary<string, string>()
-           {
-                   { "Email Address", EmailAddress },
-                   { "Subject", Subject },
-                   { "Details", Details },
-                   { "g-recaptcha-response", reCaptchaResponse },
-           };
+        {
+            { "Email Address", EmailAddress },
+            { "Subject", Subject },
+            { "Details", Details },
+            { "g-recaptcha-response", reCaptchaResponse },
+        };
 
 
     }

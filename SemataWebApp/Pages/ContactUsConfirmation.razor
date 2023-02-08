@@ -1,0 +1,13 @@
+﻿@page "/Pages/ContactUsConfirmation/{MessageText}"
+
+<h2 id="heading">Contact Us Confirmation</h2>
+<p>
+    @MessageText
+</p>
+
+
+@code
+{
+    [Parameter]
+    public string MessageText { get; set; }
+}

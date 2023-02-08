@@ -1,0 +1,13 @@
+﻿@page "/Pages/SupportRequestConfirmation/{MessageText}"
+
+<h2 id="heading">Support Request Confirmation</h2>
+<p>
+    @MessageText
+</p>
+
+
+@code
+{
+    [Parameter]
+    public string MessageText { get; set; }
+}

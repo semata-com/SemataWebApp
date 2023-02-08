@@ -1,11 +1,12 @@
 ﻿@page "/Pages/ContactUs"
+@inject NavigationManager Navigation
 
-<Message @ref="messageComponent" Heading="Contact Us"  Narrative="@Narrative" MessageText="@MessageText" />
+<Message @ref="messageComponent" Heading="Contact Us" Narrative="@Narrative" MessageText="@MessageText" />
 
 <button @onclick="SubmitRequest">Submit</button>
 
-
-@code {
+@code
+{
 
     Message messageComponent;
 
@@ -19,6 +20,7 @@
         submitParameters["Action Id"] = "Contact Us";
         var actionResponse = await ActionRequest.Post("Contact Us", submitParameters);
         MessageText = actionResponse.Message;
+        Navigation.NavigateTo("Pages/ContactUsConfirmation/" + MessageText);
     }
 
 }

@@ -1,11 +1,13 @@
 ﻿@page "/Pages/SupportRequest"
+@inject NavigationManager Navigation
 
 <Message @ref="messageComponent" Heading="Support Request" Narrative="@Narrative" MessageText="@MessageText" />
 
 <button @onclick="SubmitRequest">Submit</button>
 
 
-@code {
+@code
+{
 
     Message messageComponent;
 
@@ -20,6 +22,7 @@
         var submitParameters = await messageComponent.GetNameValuePairs();
         var actionResponse = await ActionRequest.Post("Support Request", submitParameters);
         MessageText = actionResponse.Message;
+        Navigation.NavigateTo("Pages/SupportRequestConfirmation/" + MessageText);
     }
 
 }
